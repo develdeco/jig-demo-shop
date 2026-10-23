@@ -1,0 +1,5 @@
+workspaces:
+  - id: cart
+    path: cart
+oracles:
+  test: "go test ./{path}/..."
