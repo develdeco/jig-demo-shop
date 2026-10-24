@@ -10,3 +10,15 @@ func TestTotalRoundsOnceOnTheOrder(t *testing.T) {
 		t.Fatalf("Total = %d cents, want 899", got)
 	}
 }
+
+// A discount below 0 or above 100 percent is clamped before pricing.
+func TestTotalClampsDiscountPercent(t *testing.T) {
+	items := []Item{{PriceCents: 1000, Qty: 1}}
+
+	if got := Total(items, -10); got != 1000 {
+		t.Fatalf("Total with -10%% = %d cents, want 1000 (clamped to 0%%)", got)
+	}
+	if got := Total(items, 150); got != 0 {
+		t.Fatalf("Total with 150%% = %d cents, want 0 (clamped to 100%%)", got)
+	}
+}
