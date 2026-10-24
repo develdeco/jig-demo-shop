@@ -40,3 +40,12 @@ func TestTotalRoundsTieUp(t *testing.T) {
 		t.Fatalf("Total = %d cents, want 10", got)
 	}
 }
+
+// One line of three at 3.33 prices the same as three separate lines of one:
+// qty is part of the subtotal, not just the line count.
+func TestTotalMultipliesByQty(t *testing.T) {
+	items := []Item{{PriceCents: 333, Qty: 3}}
+	if got := Total(items, 10); got != 899 {
+		t.Fatalf("Total = %d cents, want 899", got)
+	}
+}
