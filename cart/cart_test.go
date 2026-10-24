@@ -11,6 +11,23 @@ func TestTotalRoundsOnceOnTheOrder(t *testing.T) {
 	}
 }
 
+// 3.33 at 10% off is 2.997, which rounds up to 300: truncation would give 299.
+func TestTotalRoundsFractionUp(t *testing.T) {
+	items := []Item{{PriceCents: 333, Qty: 1}}
+	if got := Total(items, 10); got != 300 {
+		t.Fatalf("Total = %d cents, want 300", got)
+	}
+}
+
+// 10 cents at 5% off is exactly 9.5, a half-cent tie that rounds up to 10:
+// truncation would give 9.
+func TestTotalRoundsHalfCentUp(t *testing.T) {
+	items := []Item{{PriceCents: 10, Qty: 1}}
+	if got := Total(items, 5); got != 10 {
+		t.Fatalf("Total = %d cents, want 10", got)
+	}
+}
+
 // A discount below 0 or above 100 percent is clamped before pricing.
 func TestTotalClampsDiscountPercent(t *testing.T) {
 	items := []Item{{PriceCents: 1000, Qty: 1}}
