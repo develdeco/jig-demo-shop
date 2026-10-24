@@ -22,3 +22,21 @@ func TestTotalClampsDiscountPct(t *testing.T) {
 		t.Fatalf("Total with 150%% discount = %d cents, want 0", got)
 	}
 }
+
+// 3.34 at 15% off is a subtotal of 283.9 cents: round to the nearest cent,
+// 284, not truncate to 283.
+func TestTotalRoundsFractionalCentUp(t *testing.T) {
+	items := []Item{{PriceCents: 334, Qty: 1}}
+	if got := Total(items, 15); got != 284 {
+		t.Fatalf("Total = %d cents, want 284", got)
+	}
+}
+
+// A tie - exactly half a cent - rounds up, not down: 0.10 at 5% off is a
+// subtotal of 9.5 cents, which rounds to 10, not truncates to 9.
+func TestTotalRoundsTieUp(t *testing.T) {
+	items := []Item{{PriceCents: 10, Qty: 1}}
+	if got := Total(items, 5); got != 10 {
+		t.Fatalf("Total = %d cents, want 10", got)
+	}
+}
