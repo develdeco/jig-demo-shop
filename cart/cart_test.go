@@ -11,6 +11,15 @@ func TestTotalRoundsOnceOnTheOrder(t *testing.T) {
 	}
 }
 
+// One item at 3.33 with 10% off costs 2.997, so 3.00 rounded, not 2.99
+// truncated: this is the case that tells rounding apart from truncating.
+func TestTotalRoundsUpAtHalfACent(t *testing.T) {
+	items := []Item{{PriceCents: 333, Qty: 1}}
+	if got := Total(items, 10); got != 300 {
+		t.Fatalf("Total = %d cents, want 300", got)
+	}
+}
+
 // A discount outside [0, 100] clamps instead of inflating the total above
 // the subtotal or driving it negative.
 func TestTotalClampsDiscountPct(t *testing.T) {
