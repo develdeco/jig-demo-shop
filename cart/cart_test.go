@@ -11,6 +11,15 @@ func TestTotalRoundsOnceOnTheOrder(t *testing.T) {
 	}
 }
 
+// One item at 3.33 with 10% off is 2.997, so 3.00: rounded to the nearest
+// cent, not truncated to 2.99.
+func TestTotalRoundsToNearestCentNotDown(t *testing.T) {
+	items := []Item{{PriceCents: 333, Qty: 1}}
+	if got := Total(items, 10); got != 300 {
+		t.Fatalf("Total = %d cents, want 300", got)
+	}
+}
+
 // A discount below 0% or above 100% is clamped, rather than inflating the
 // total or returning a negative one.
 func TestTotalClampsDiscountPct(t *testing.T) {
