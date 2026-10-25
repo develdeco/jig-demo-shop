@@ -20,6 +20,15 @@ func TestTotalRoundsToNearestCentNotDown(t *testing.T) {
 	}
 }
 
+// A line's subtotal is its price times its quantity: two units at 5.00
+// with 10% off cost 9.00, not the single-unit price discounted.
+func TestTotalMultipliesLineByQty(t *testing.T) {
+	items := []Item{{PriceCents: 500, Qty: 2}}
+	if got := Total(items, 10); got != 900 {
+		t.Fatalf("Total = %d cents, want 900", got)
+	}
+}
+
 // A discount below 0% or above 100% is clamped, rather than inflating the
 // total or returning a negative one.
 func TestTotalClampsDiscountPct(t *testing.T) {
