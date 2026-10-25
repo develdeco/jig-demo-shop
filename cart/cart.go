@@ -13,7 +13,18 @@ func Total(items []Item, discountPct int) int {
 	for _, it := range items {
 		subtotal += it.PriceCents * it.Qty
 	}
-	return roundToCent(subtotal * (100 - discountPct))
+	return roundToCent(subtotal * (100 - clampPct(discountPct)))
+}
+
+// clampPct keeps a discount percentage within [0, 100].
+func clampPct(pct int) int {
+	if pct < 0 {
+		return 0
+	}
+	if pct > 100 {
+		return 100
+	}
+	return pct
 }
 
 // roundToCent takes cents-times-100 (a subtotal times a percent) down to the
