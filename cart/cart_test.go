@@ -11,6 +11,24 @@ func TestTotalRoundsOnceOnTheOrder(t *testing.T) {
 	}
 }
 
+// Three items at 3.34 with 10% off cost 9.018, which rounds up to 9.02 -
+// truncation would give 9.01. This pins rounding, not truncation, at the seam.
+func TestTotalRoundsUpAFraction(t *testing.T) {
+	items := []Item{{PriceCents: 334, Qty: 1}, {PriceCents: 334, Qty: 1}, {PriceCents: 334, Qty: 1}}
+	if got := Total(items, 10); got != 902 {
+		t.Fatalf("Total = %d cents, want 902", got)
+	}
+}
+
+// One item at 0.05 with 50% off is an exact half-cent tie: 2.5 cents, which
+// rounds half-up (away from zero) to 3 - truncation would give 2.
+func TestTotalRoundsHalfCentTieUp(t *testing.T) {
+	items := []Item{{PriceCents: 5, Qty: 1}}
+	if got := Total(items, 50); got != 3 {
+		t.Fatalf("Total = %d cents, want 3", got)
+	}
+}
+
 // A discount below 0 clamps to 0%: no discount at all.
 func TestTotalClampsDiscountBelowZero(t *testing.T) {
 	items := []Item{{PriceCents: 1000, Qty: 1}}
