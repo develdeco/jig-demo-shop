@@ -10,3 +10,19 @@ func TestTotalRoundsOnceOnTheOrder(t *testing.T) {
 		t.Fatalf("Total = %d cents, want 899", got)
 	}
 }
+
+// A discount below 0 clamps to 0%: no discount at all.
+func TestTotalClampsDiscountBelowZero(t *testing.T) {
+	items := []Item{{PriceCents: 1000, Qty: 1}}
+	if got := Total(items, -10); got != 1000 {
+		t.Fatalf("Total = %d cents, want 1000", got)
+	}
+}
+
+// A discount above 100 clamps to 100%: the order is free.
+func TestTotalClampsDiscountAboveHundred(t *testing.T) {
+	items := []Item{{PriceCents: 1000, Qty: 1}}
+	if got := Total(items, 150); got != 0 {
+		t.Fatalf("Total = %d cents, want 0", got)
+	}
+}
