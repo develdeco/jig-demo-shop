@@ -9,8 +9,16 @@ type Item struct {
 
 // Total is what the order costs, in cents, after a percentage discount.
 // The discount is taken once on the order subtotal and rounded to the
-// nearest cent, rather than truncated line by line.
+// nearest cent, rather than truncated line by line. discountPct is
+// clamped to [0, 100].
 func Total(items []Item, discountPct int) int {
+	switch {
+	case discountPct < 0:
+		discountPct = 0
+	case discountPct > 100:
+		discountPct = 100
+	}
+
 	subtotal := 0
 	for _, it := range items {
 		subtotal += it.PriceCents * it.Qty
