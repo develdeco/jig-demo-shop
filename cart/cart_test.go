@@ -11,6 +11,17 @@ func TestTotalRoundsOnceOnTheOrder(t *testing.T) {
 	}
 }
 
+// A fractional cent at or past the half boundary rounds up instead of
+// truncating down: 55.5 cents rounds to 56, and 0.5 cents rounds to 1.
+func TestTotalRoundsHalfCentUp(t *testing.T) {
+	if got := Total([]Item{{PriceCents: 111, Qty: 1}}, 50); got != 56 {
+		t.Fatalf("Total = %d cents, want 56", got)
+	}
+	if got := Total([]Item{{PriceCents: 10, Qty: 1}}, 95); got != 1 {
+		t.Fatalf("Total = %d cents, want 1", got)
+	}
+}
+
 // A discount below 0% or above 100% is clamped before it is applied, so it
 // can never produce a negative total or one over the subtotal.
 func TestTotalClampsDiscountPct(t *testing.T) {
