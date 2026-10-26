@@ -11,6 +11,15 @@ func TestTotalRoundsOnceOnTheOrder(t *testing.T) {
 	}
 }
 
+// One item at 3.33 with 10% off is 2.997, which rounds to 3.00: a fraction of
+// at least half a cent must round up, not truncate down to 2.99.
+func TestTotalRoundsHalfCentUp(t *testing.T) {
+	items := []Item{{PriceCents: 333, Qty: 1}}
+	if got := Total(items, 10); got != 300 {
+		t.Fatalf("Total = %d cents, want 300", got)
+	}
+}
+
 // A negative discount cannot inflate the total past the subtotal: it clamps to 0% off.
 func TestTotalClampsDiscountBelowZero(t *testing.T) {
 	items := []Item{{PriceCents: 1000, Qty: 1}}
