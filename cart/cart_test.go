@@ -10,3 +10,16 @@ func TestTotalRoundsOnceOnTheOrder(t *testing.T) {
 		t.Fatalf("Total = %d cents, want 899", got)
 	}
 }
+
+// A discount below 0% or above 100% clamps to the nearest boundary instead
+// of producing a total outside [0, subtotal].
+func TestTotalClampsDiscountPct(t *testing.T) {
+	items := []Item{{PriceCents: 333, Qty: 1}, {PriceCents: 333, Qty: 1}, {PriceCents: 333, Qty: 1}}
+
+	if got := Total(items, -5); got != 999 {
+		t.Fatalf("Total with -5%% discount = %d cents, want 999 (clamped to 0%%)", got)
+	}
+	if got := Total(items, 150); got != 0 {
+		t.Fatalf("Total with 150%% discount = %d cents, want 0 (clamped to 100%%)", got)
+	}
+}
