@@ -11,6 +11,17 @@ func TestTotalRoundsOnceOnTheOrder(t *testing.T) {
 	}
 }
 
+// 111 at 10% off is 99.9, which rounds up to 100 but truncates down to 99:
+// this pins rounding against a regression to per-line truncation, which
+// TestTotalRoundsOnceOnTheOrder's repro cannot (999 at 10% off is 899.1,
+// which floors and rounds to the same 899).
+func TestTotalRoundsToNearestCent(t *testing.T) {
+	items := []Item{{PriceCents: 111, Qty: 1}}
+	if got := Total(items, 10); got != 100 {
+		t.Fatalf("Total = %d cents, want 100", got)
+	}
+}
+
 // A discount below 0% or above 100% is clamped, so it can never inflate
 // the total above the subtotal or push it negative.
 func TestTotalClampsDiscountPct(t *testing.T) {
