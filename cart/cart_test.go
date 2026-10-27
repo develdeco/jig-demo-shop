@@ -27,6 +27,14 @@ func TestTotalRoundsRatherThanTruncates(t *testing.T) {
 	}
 }
 
+// A line's quantity multiplies its price before the discount, so a single
+// multi-unit line is priced the same as repeating it as separate lines.
+func TestTotalMultipliesByQty(t *testing.T) {
+	if got := Total([]Item{{PriceCents: 333, Qty: 3}}, 10); got != 899 {
+		t.Fatalf("Total = %d cents, want 899", got)
+	}
+}
+
 // A discount outside 0-100 is clamped, so the order never prices above its
 // full subtotal or below zero.
 func TestTotalClampsDiscountPct(t *testing.T) {
