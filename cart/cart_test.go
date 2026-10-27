@@ -11,14 +11,13 @@ func TestTotalRoundsOnceOnTheOrder(t *testing.T) {
 	}
 }
 
-// Three items at 3.34 with 10% off cost 9.018: rounded to the nearest
-// cent that's 902, not 901, which is what truncating would give. This
-// pins round-half-up specifically, since TestTotalRoundsOnceOnTheOrder's
-// figures land on a whole cent under both rounding and truncation.
+// One item at 1.01 with 50% off is 50.5 cents, a half-cent tie: only
+// round-half-up gives 51. Truncation and round-half-down both give 50,
+// so this is the case that pins the tie direction the brief names.
 func TestTotalRoundsHalfUp(t *testing.T) {
-	items := []Item{{PriceCents: 334, Qty: 1}, {PriceCents: 334, Qty: 1}, {PriceCents: 334, Qty: 1}}
-	if got := Total(items, 10); got != 902 {
-		t.Fatalf("Total = %d cents, want 902", got)
+	items := []Item{{PriceCents: 101, Qty: 1}}
+	if got := Total(items, 50); got != 51 {
+		t.Fatalf("Total = %d cents, want 51", got)
 	}
 }
 
