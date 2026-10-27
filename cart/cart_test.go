@@ -11,6 +11,16 @@ func TestTotalRoundsOnceOnTheOrder(t *testing.T) {
 	}
 }
 
+// A half-cent remainder rounds up: three items at 3.33 with 50% off is
+// subtotal 999, discounted 499.5 cents, which only half-away-from-zero (not
+// truncation) rounds to 500.
+func TestTotalRoundsHalfCentUp(t *testing.T) {
+	items := []Item{{PriceCents: 333, Qty: 1}, {PriceCents: 333, Qty: 1}, {PriceCents: 333, Qty: 1}}
+	if got := Total(items, 50); got != 500 {
+		t.Fatalf("Total = %d cents, want 500", got)
+	}
+}
+
 // A discount percent outside [0, 100] is clamped before pricing: below 0
 // costs the full subtotal, above 100 costs nothing.
 func TestTotalClampsDiscountPercent(t *testing.T) {
