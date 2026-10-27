@@ -11,6 +11,15 @@ func TestTotalRoundsOnceOnTheOrder(t *testing.T) {
 	}
 }
 
+// A line's quantity multiplies its price before the discount: 3 units at
+// 5.00 plus 1 unit at 2.00 is a 17.00 subtotal, 20% off is 13.60.
+func TestTotalMultipliesPriceByQty(t *testing.T) {
+	items := []Item{{PriceCents: 500, Qty: 3}, {PriceCents: 200, Qty: 1}}
+	if got := Total(items, 20); got != 1360 {
+		t.Fatalf("Total = %d cents, want 1360", got)
+	}
+}
+
 // An exact half-cent rounds up: 101 cents at 50% off is 50.5 cents.
 func TestTotalRoundsHalfCentUp(t *testing.T) {
 	items := []Item{{PriceCents: 101, Qty: 1}}
