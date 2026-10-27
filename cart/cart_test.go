@@ -11,6 +11,15 @@ func TestTotalRoundsOnceOnTheOrder(t *testing.T) {
 	}
 }
 
+// A half-cent result rounds up: 1 cent at 50% off is 0.5 cents, which
+// truncation would drop to 0 but round-half-up takes to 1.
+func TestTotalRoundsHalfCentUp(t *testing.T) {
+	items := []Item{{PriceCents: 1, Qty: 1}}
+	if got := Total(items, 50); got != 1 {
+		t.Fatalf("Total = %d cents, want 1", got)
+	}
+}
+
 // A discount below 0% behaves as 0% off.
 func TestTotalClampsNegativeDiscount(t *testing.T) {
 	items := []Item{{PriceCents: 1000, Qty: 1}}
