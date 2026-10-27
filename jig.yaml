@@ -1,3 +1,4 @@
 jig: "1"
 project: shop
+store: git@github.com:develdeco/jig-demo-shop-tickets.git
 kind: project
