@@ -9,13 +9,25 @@ type Item struct {
 
 // Total is what the order costs, in cents, after a percentage discount.
 // The discount is taken once on the order subtotal and rounded to the
-// nearest cent, rather than per line.
+// nearest cent, rather than per line. discountPct is clamped to [0, 100].
 func Total(items []Item, discountPct int) int {
+	discountPct = clampPct(discountPct)
 	subtotal := 0
 	for _, it := range items {
 		subtotal += it.PriceCents * it.Qty
 	}
 	return roundCents(subtotal * (100 - discountPct))
+}
+
+// clampPct restricts a discount percentage to [0, 100].
+func clampPct(pct int) int {
+	if pct < 0 {
+		return 0
+	}
+	if pct > 100 {
+		return 100
+	}
+	return pct
 }
 
 // roundCents rounds hundredths of a cent to the nearest cent, half away
