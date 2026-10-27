@@ -20,6 +20,15 @@ func TestTotalRoundsHalfUp(t *testing.T) {
 	}
 }
 
+// A line's quantity multiplies into the subtotal: one line at 3.33 x3
+// prices the same as three lines at 3.33 x1.
+func TestTotalMultipliesQty(t *testing.T) {
+	items := []Item{{PriceCents: 333, Qty: 3}}
+	if got := Total(items, 10); got != 899 {
+		t.Fatalf("Total = %d cents, want 899", got)
+	}
+}
+
 // A discount outside [0, 100] clamps instead of discounting past free or
 // into a negative price.
 func TestTotalClampsDiscountPct(t *testing.T) {
