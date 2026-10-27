@@ -11,6 +11,17 @@ func TestTotalRoundsOnceOnTheOrder(t *testing.T) {
 	}
 }
 
+// Three items at 3.34 with 10% off cost 9.018: rounded to the nearest
+// cent that's 902, not 901, which is what truncating would give. This
+// pins round-half-up specifically, since TestTotalRoundsOnceOnTheOrder's
+// figures land on a whole cent under both rounding and truncation.
+func TestTotalRoundsHalfUp(t *testing.T) {
+	items := []Item{{PriceCents: 334, Qty: 1}, {PriceCents: 334, Qty: 1}, {PriceCents: 334, Qty: 1}}
+	if got := Total(items, 10); got != 902 {
+		t.Fatalf("Total = %d cents, want 902", got)
+	}
+}
+
 // A discount outside [0, 100] clamps to that range instead of pushing the
 // total negative or above the subtotal.
 func TestTotalClampsDiscountPct(t *testing.T) {
