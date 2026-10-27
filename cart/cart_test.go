@@ -10,3 +10,16 @@ func TestTotalRoundsOnceOnTheOrder(t *testing.T) {
 		t.Fatalf("Total = %d cents, want 899", got)
 	}
 }
+
+// A discount outside 0-100 is clamped, so the order never prices above its
+// full subtotal or below zero.
+func TestTotalClampsDiscountPct(t *testing.T) {
+	items := []Item{{PriceCents: 1000, Qty: 1}}
+
+	if got := Total(items, -10); got != 1000 {
+		t.Fatalf("Total with negative discount = %d cents, want 1000", got)
+	}
+	if got := Total(items, 150); got != 0 {
+		t.Fatalf("Total with over-100 discount = %d cents, want 0", got)
+	}
+}
