@@ -1,5 +1,9 @@
 workspaces:
   - id: cart
     path: cart
+  - id: shipping
+    path: shipping
+  - id: order
+    path: order
 oracles:
   test: "go test ./{path}/..."
