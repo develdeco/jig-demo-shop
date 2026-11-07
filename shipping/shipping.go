@@ -10,6 +10,11 @@ var rates = map[string][3]int{
 	"international": {1500, 2500, 4000},
 }
 
+// FreeShippingThresholdCents is the order subtotal, in cents, at or above
+// which shipping is free. Exported so callers and tests can state
+// expectations against the same constant Cost checks internally.
+const FreeShippingThresholdCents = 7500
+
 // Rate is the shipping cost in cents for a region and a weight in grams,
 // looked up in a table of weight bands: <=500g, 500-2000g, and >2000g.
 // Rate trusts its caller for a sane, non-negative weight; a non-positive
@@ -28,4 +33,17 @@ func Rate(region string, grams int) (int, error) {
 	default:
 		return bands[2], nil
 	}
+}
+
+// Cost is the shipping cost in cents for a region, a weight in grams, and
+// the order's subtotal in cents - the single entry point order pricing
+// calls for shipping. Once subtotalCents clears FreeShippingThresholdCents,
+// shipping is free regardless of region or weight, even for an unknown
+// region. Below the threshold, Cost returns exactly what Rate(region,
+// grams) would, success or its unknown-region error alike.
+func Cost(region string, grams, subtotalCents int) (int, error) {
+	if subtotalCents >= FreeShippingThresholdCents {
+		return 0, nil
+	}
+	return Rate(region, grams)
 }
