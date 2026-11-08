@@ -101,3 +101,34 @@ func TestTotalThresholdUsesDiscountedSubtotal(t *testing.T) {
 		t.Errorf("Total = %d, want %d (discounted subtotal %d + rate %d)", got, want, subtotal, wantRate)
 	}
 }
+
+// The region Total hands shipping.Rate and shipping.Cost is the one its
+// caller passed, not hardcoded: an "international" order prices against the
+// international rate table, not domestic's.
+func TestTotalPassesRegionThrough(t *testing.T) {
+	items := []cart.Item{{PriceCents: 1000, Qty: 1}}
+	subtotal := cart.Total(items, 0)
+	if subtotal >= shipping.FreeShippingThresholdCents {
+		t.Fatalf("subtotal %d is not below the free-shipping threshold, fixture is wrong", subtotal)
+	}
+
+	domesticRate, err := shipping.Rate("domestic", 2001)
+	if err != nil {
+		t.Fatalf("shipping.Rate returned error %v, want nil", err)
+	}
+	internationalRate, err := shipping.Rate("international", 2001)
+	if err != nil {
+		t.Fatalf("shipping.Rate returned error %v, want nil", err)
+	}
+	if domesticRate == internationalRate {
+		t.Fatal("domestic and international rates are equal at this weight, fixture can't distinguish the two")
+	}
+
+	got, err := Total(items, 0, "international", 2001)
+	if err != nil {
+		t.Fatalf("Total returned error %v, want nil", err)
+	}
+	if want := subtotal + internationalRate; got != want {
+		t.Errorf("Total = %d, want %d (subtotal %d + international rate %d, not domestic's %d)", got, want, subtotal, internationalRate, domesticRate)
+	}
+}
