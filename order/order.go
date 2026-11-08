@@ -1,4 +1,8 @@
 // Package order prices a whole order: its items, discount and shipping.
+//
+// Total composes cart.Total with shipping.Rate and shipping.Cost; an
+// unknown region always errors, even on an order whose subtotal would
+// otherwise ship free (gate finding r1-f1, kept).
 package order
 
 import (
